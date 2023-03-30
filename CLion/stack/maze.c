@@ -56,6 +56,10 @@ element pop(StackType *s) {
 
 void print_stack(StackType *s) {
     printf("Stack: ");
+    if(s->top == -1) {
+        printf("empty\n");
+        return;
+    }
     for (int i = s->top; i >= 0; i--) {
         printf("(%d, %d) ", s->data[i].r, s->data[i].c);
     }
@@ -96,11 +100,14 @@ int main(void) {
         push_loc(&s, r + 1, c);
         push_loc(&s, r, c - 1);
         push_loc(&s, r, c + 1);
+        printf("이동 전 ");
+        print_stack(&s);
         if (is_empty(&s)) {
             printf("실패\n");
             return 0;
         } else
             here = pop(&s);
+        printf("이동 후 ");
         print_stack(&s);
     }
     printf("성공\n");
