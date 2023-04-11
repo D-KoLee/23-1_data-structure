@@ -3,4 +3,4 @@ project(CLion C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(CLion stack/maze.c)
+add_executable(CLion linked_list/201901268.c linked_list/201901268.c)

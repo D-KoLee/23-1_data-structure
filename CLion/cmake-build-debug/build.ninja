@@ -46,11 +46,11 @@ cmake_ninja_workdir = /Users/seungjunryu/Documents/GitHub/23-1_data-structure/CL
 
 build cmake_object_order_depends_target_CLion: phony || CMakeFiles/CLion.dir
 
-build CMakeFiles/CLion.dir/stack/maze.c.o: C_COMPILER__CLion_Debug /Users/seungjunryu/Documents/GitHub/23-1_data-structure/CLion/stack/maze.c || cmake_object_order_depends_target_CLion
-  DEP_FILE = CMakeFiles/CLion.dir/stack/maze.c.o.d
-  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk -fcolor-diagnostics -std=gnu11
+build CMakeFiles/CLion.dir/linked_list/201901268.c.o: C_COMPILER__CLion_Debug /Users/seungjunryu/Documents/GitHub/23-1_data-structure/CLion/linked_list/201901268.c || cmake_object_order_depends_target_CLion
+  DEP_FILE = CMakeFiles/CLion.dir/linked_list/201901268.c.o.d
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics -std=gnu11
   OBJECT_DIR = CMakeFiles/CLion.dir
-  OBJECT_FILE_DIR = CMakeFiles/CLion.dir/stack
+  OBJECT_FILE_DIR = CMakeFiles/CLion.dir/linked_list
 
 
 # =============================================================================
@@ -60,8 +60,8 @@ build CMakeFiles/CLion.dir/stack/maze.c.o: C_COMPILER__CLion_Debug /Users/seungj
 #############################################
 # Link the executable CLion
 
-build CLion: C_EXECUTABLE_LINKER__CLion_Debug CMakeFiles/CLion.dir/stack/maze.c.o
-  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.1.sdk
+build CLion: C_EXECUTABLE_LINKER__CLion_Debug CMakeFiles/CLion.dir/linked_list/201901268.c.o
+  FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
   OBJECT_DIR = CMakeFiles/CLion.dir
   POST_BUILD = :
   PRE_LINK = :
