@@ -1,13 +1,18 @@
 //
 // Created by SeungJun Ryu on 2023/04/15.
 //
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdio.h> // printf, scanf, puts
+#include <stdlib.h> // malloc, free
+#include <string.h> // strlen
+#include <ctype.h> // isdigit, isalpha
+
+#define MAX_EXPR_LEN 100    // 중위 표기식의 최대 길이
+#define MAX_STACK_SIZE 100    // 피연산자 스택의 최대 크기
 
 // 스택을 구현하는 구조체
 typedef int element;
-typedef struct StackNode {
+
+typedef struct {
     element data;
     struct StackNode *link;
 } StackNode;
@@ -35,16 +40,20 @@ int is_full(LinkedStackType *s) {
 // 삽입 함수
 void push(LinkedStackType *s, element item) {
     StackNode *temp = (StackNode *) malloc(sizeof(StackNode));
+    if (temp == NULL) {
+        fprintf(stderr, "메모리 할당 에러\n");
+        return;
+    }
     temp->data = item;
     temp->link = s->top;
     s->top = temp;
 }
 
-void print_stack(LinkedStackType *s) {
-    for (StackNode *p = s->top; p != NULL; p = p->link)
-        printf("%d->", p->data);
-    printf("NULL \n");
-}
+//void print_stack(LinkedStackType *s) {
+//    for (StackNode *p = s->top; p != NULL; p = p->link)
+//        printf("%d->", p->data);
+//    printf("NULL \n");
+//}
 
 // 삭제 함수
 element pop(LinkedStackType *s) {
@@ -53,29 +62,185 @@ element pop(LinkedStackType *s) {
         exit(1);
     } else {
         StackNode *temp = s->top;
-        int data = temp->data;
+        element data = temp->data;
         s->top = s->top->link;
         free(temp);
         return data;
     }
 }
 
-// 주 함수
-int main(void) {
+//스택의 top에 있는 원소를 반환하는 함수
+element peek(LinkedStackType *s) {
+    if (is_empty(s)) {
+        fprintf(stderr, "스택이 비어있음\n");
+        exit(1);
+    } else {
+        return s->top->data;
+    }
+}
+
+//연산자 우선순위를 반환하는 함수
+int prec(char op) {
+    switch (op) {
+        case '(':
+        case ')':
+            return 0; //괄호는 무조건 제일 낮은 우선순위로 취급
+        case '+':
+        case '-':
+            return 1;
+        case '*':
+        case '/':
+            return 2;
+    }
+    return -1;
+}
+
+void is_infix_fine(char exp[]) { //중위 표현식이 올바른지 검사하는 함수
+    int len = strlen(exp);
+    int bracket = 0;
+
+    if (exp[0] == '+' || exp[0] == '*' || exp[0] == '/' || exp[0] == ')') {
+        printf("잘못된 중위 표현식입니다.\n부호가 포함되어 있습니다.");
+        exit(1);
+    }//처음에 부호가 나오면 오류
+    if (exp[len - 1] == '+' || exp[len - 1] == '*' || exp[len - 1] == '/' || exp[len - 1] == '(') {
+        printf("잘못된 중위 표현식입니다.\n부호가 포함되어 있습니다.");
+        exit(1);
+    }//마지막에 부호가 나오면 오류
+
+    for (int i = 0; i < len; i++) {
+        if (exp[i] == '(' && exp[i + 1] == ')') {
+            printf("잘못된 중위 표현식입니다.\n괄호가 비어있습니다.");
+            exit(1);
+        }//괄호가 비어있으면 오류
+        if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/') {
+            if (exp[i + 1] == '+' || exp[i + 1] == '-' || exp[i + 1] == '*' || exp[i + 1] == '/') {
+                printf("잘못된 중위 표현식입니다.\n부호가 연속으로 나옵니다.");
+                exit(1);
+            }//연산자가 연속으로 나오면 오류
+        }
+        if (exp[i] == '(')
+            bracket++; //왼쪽 괄호가 나오면 bracket++
+        else if (exp[i] == ')')
+            bracket--; //오른쪽 괄호가 나오면 bracket--
+    }
+    if (bracket != 0) { //괄호 갯수가 같다면 0이어야 함
+        printf("잘못된 중위 표현식입니다.\n괄호가 맞지 않습니다.");
+        exit(1);
+    }
+}
+
+//후위표기법으로 변환하는 함수
+void infix_to_postfix(char exp[], char postfix[]) {
+    int i, j = 0;
+    char ch;
+    int len = strlen(exp);
+
     LinkedStackType s;
     init(&s);
-    push(&s, 1);
-    print_stack(&s);
-    push(&s, 2);
-    print_stack(&s);
-    push(&s, 3);
-    print_stack(&s);
-    pop(&s);
-    print_stack(&s);
-    pop(&s);
-    print_stack(&s);
-    pop(&s);
-    print_stack(&s);
+
+    for (i = 0; i < len; i++) {
+        ch = exp[i];
+        switch (ch) {
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                while (!is_empty(&s) && (prec(ch) <= prec(peek(&s)))) {
+                    //스택에 있는 연산자의 우선순위가 더 높거나 같으면 pop
+                    postfix[j++] = pop(&s);
+                    postfix[j++] = ' ';
+                }
+                push(&s, ch);
+                break;
+            case '(': //왼쪽 괄호는 무조건 스택에 push
+                push(&s, ch);
+                break;
+            case ')': //오른쪽 괄호는 왼쪽 괄호가 나올 때까지 pop
+                while (peek(&s) != '(') {
+                    postfix[j++] = pop(&s);
+                    postfix[j++] = ' ';
+                }
+                if (is_empty(&s) || pop(&s) != '(') {
+                    printf("Error: Invalid infix expression.\n");
+                    exit(1);
+                }
+                break;
+            case '.': //소숫점은 그냥 출력
+                postfix[j++] = ch;
+                break;
+            default: //피연산자는 출력
+                postfix[j++] = ch;
+                if (!isdigit(exp[i + 1]) && exp[i + 1] != '.') //피연산자 뒤에 숫자가 아닌 문자가 오면 공백 추가
+                    postfix[j++] = ' ';
+                break;
+        }
+    }
+    while (!is_empty(&s)) {  //스택에 남아있는 모든 연산자 pop
+        postfix[j++] = pop(&s);
+        postfix[j++] = ' ';
+    }
+    postfix[j++] = '\0';
+}
+
+//후위표기법을 계산하는 함수
+double eval_postfix(char exp[]) {
+    int i = 0; //exp의 인덱스
+    double op1, op2, value;
+    int len = strlen(exp);
+
+    LinkedStackType s;
+    init(&s);
+
+    for (i = 0; i < len; i++) {
+        if (isdigit(exp[i]) || exp[i] == '.') { //피연산자는 스택에 push
+            value = atof(&exp[i]); //문자열을 실수로 변환
+            push(&s, value); //스택에 push
+            while (isdigit(exp[i]) || exp[i] == '.') //연산자가 나올 때까지 인덱스 증가
+                i++;
+        } else if (exp[i] == ' ') //공백은 무시
+            continue;
+        else { //연산자는 스택에서 pop
+            op2 = pop(&s);
+            op1 = pop(&s);
+            switch (exp[i]) {
+                case '+':
+                    push(&s, op1 + op2);
+                    break;
+                case '-':
+                    push(&s, op1 - op2);
+                    break;
+                case '*':
+                    push(&s, op1 * op2);
+                    break;
+                case '/':
+                    push(&s, op1 / op2);
+                    break;
+            }
+        }
+    }
+    return pop(&s);
+}
+
+// 주 함수
+int main(void) {
+    char infix[MAX_EXPR_LEN] = {""};
+    char postfix[MAX_EXPR_LEN] = {""};
+    printf("중위식을 입력하세요 : ");
+    fgets(infix, MAX_EXPR_LEN, stdin);
+    infix[strcspn(infix, "\n")] = '\0';    // fgets로 입력받은 문자열 마지막 개행 문자 제거
+    is_infix_fine(infix);
+
+//    printf("전위식 : ");
+//    infix_to_prefix(infix);
+//    printf("\n");
+//
+    printf("후위식 : ");
+    infix_to_postfix(infix, postfix);
+    printf("%s", postfix);
+    printf("\n");
+//
+    printf("계산결과 : %lf", eval_postfix(&postfix));
     return 0;
 }
 
