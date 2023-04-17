@@ -10,7 +10,7 @@
 #define MAX_STACK_SIZE 100    // 피연산자 스택의 최대 크기
 
 // 스택을 구현하는 구조체
-typedef int element;
+typedef double element;
 
 typedef struct {
     element data;
@@ -119,6 +119,11 @@ void is_infix_fine(char exp[]) { //중위 표현식이 올바른지 검사하는
                 exit(1);
             }//연산자가 연속으로 나오면 오류
 
+        if (isalpha(exp[i]) != 0) {
+            fprintf(stderr, "잘못된 중위 표현식입니다.\n영문자가 포함되어 있습니다.");
+            exit(1);
+        } //영문자가 나오면 오류
+
         if (exp[i] == '(')
             bracket++; //왼쪽 괄호가 나오면 bracket++
         else if (exp[i] == ')')
@@ -201,6 +206,7 @@ double eval_postfix(char exp[]) {
         else { //연산자는 스택에서 pop
             op2 = pop(&s);
             op1 = pop(&s);
+            printf("%f %c %f = ", op1, ch, op2);
             switch (exp[i]) {
                 case '+':
                     push(&s, op1 + op2);
@@ -291,7 +297,7 @@ int main(void) {
     printf("%s", postfix);
     printf("\n");
 
-    printf("계산결과 : %lf", eval_postfix(&postfix));
+    printf("계산결과 : %g", eval_postfix(&postfix));
     return 0;
 }
 

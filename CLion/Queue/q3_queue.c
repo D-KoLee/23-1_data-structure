@@ -69,7 +69,7 @@ element dequeue(LinkedQueueType *q)
 		return data; // 데이터 반환
 	}
 }
- y
+
 void print_queue(LinkedQueueType *q)
 {
 	QueueNode *p;
