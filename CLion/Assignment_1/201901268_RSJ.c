@@ -161,7 +161,7 @@ void infix_to_postfix(char exp[], char postfix[]) {
                     postfix[j++] = pop(&s);
                     postfix[j++] = ' ';
                 }
-                pop(&s); //왼쪽 괄호 pop(제거)
+                pop(&s); //왼쪽 괄호 pop(제거
                 break;
             case '.': //소숫점은 그냥 출력
                 postfix[j++] = exp[i];
@@ -177,20 +177,19 @@ void infix_to_postfix(char exp[], char postfix[]) {
         postfix[j++] = pop(&s);
         postfix[j++] = ' ';
     }
-    postfix[j++] = '\0';
+    postfix[j] = '\0'; //문자열 끝에 NULL 추가
 }
 
 //후위표기법을 계산하는 함수
 double eval_postfix(char exp[]) {
     char ch;
-    int i = 0; //exp의 인덱스
     double op1, op2, value;
     int len = strlen(exp);
 
     LinkedStackType s;
     init(&s);
 
-    for (i = 0; i < len; i++) {
+    for (int i = 0; i < len; i++) {
         ch = exp[i];
         if (isdigit(ch) || ch == '.') { //피연산자는 스택에 push
             value = atof(&exp[i]); //문자열을 실수로 변환
@@ -243,6 +242,9 @@ void infix_to_prefix(char exp[]) {
                 }
                 push(&s, exp[i]);
                 break;
+            case ')': //오른쪽 괄호는 왼쪽 괄호가 나올 때까지 pop
+                push(&s, exp[i]);
+                break;
             case '(': //후위와 달리 역순이기 때문에 좌우 괄호 역할이 반대
                 while (peek(&s) != ')') {
                     prefix[j++] = pop(&s);
@@ -250,15 +252,12 @@ void infix_to_prefix(char exp[]) {
                 }
                 pop(&s);
                 break;
-            case ')': //오른쪽 괄호는 왼쪽 괄호가 나올 때까지 pop
-                push(&s, exp[i]);
-                break;
             case '.': //소숫점은 그냥 출력
                 prefix[j++] = exp[i];
                 break;
             default: //피연산자는 출력
                 prefix[j++] = exp[i];
-                if (!isdigit(exp[i - 1]) && exp[i - 1] != '.') //피연산자 뒤에 숫자가 아닌 문자가 오면 공백 추가
+                if (!isdigit(exp[i - 1]) && exp[i - 1] == '.') //'.' 뒤에는 공백 없어야함
                     break;
                 prefix[j++] = ' ';
                 break;
@@ -268,7 +267,7 @@ void infix_to_prefix(char exp[]) {
         prefix[j++] = pop(&s);
         prefix[j++] = ' ';
     }
-    prefix[j] = '\0';
+    prefix[--j] = '\0';
 
     for (i = strlen(prefix) - 1; i >= 0; i--) //역순으로 출력
         printf("%c", prefix[i]);
