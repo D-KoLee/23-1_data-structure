@@ -206,7 +206,6 @@ double eval_postfix(char exp[]) {
         else { //연산자는 스택에서 pop
             op2 = pop(&s);
             op1 = pop(&s);
-            printf("%f %c %f = ", op1, ch, op2);
             switch (exp[i]) {
                 case '+':
                     push(&s, op1 + op2);
