@@ -113,19 +113,19 @@ void is_infix_fine(char exp[]) { //중위 표현식이 올바른지 검사하는
             printf("잘못된 중위 표현식입니다.\n괄호가 비어있습니다.");
             exit(1);
         }//괄호가 비어있으면 오류
-        if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/') {
+        if (exp[i] == '+' || exp[i] == '-' || exp[i] == '*' || exp[i] == '/')
             if (exp[i + 1] == '+' || exp[i + 1] == '-' || exp[i + 1] == '*' || exp[i + 1] == '/') {
                 printf("잘못된 중위 표현식입니다.\n부호가 연속으로 나옵니다.");
                 exit(1);
             }//연산자가 연속으로 나오면 오류
-        }
+
         if (exp[i] == '(')
             bracket++; //왼쪽 괄호가 나오면 bracket++
         else if (exp[i] == ')')
             bracket--; //오른쪽 괄호가 나오면 bracket--
     }
     if (bracket != 0) { //괄호 갯수가 같다면 0이어야 함
-        printf("잘못된 중위 표현식입니다.\n괄호가 맞지 않습니다.");
+        printf("잘못된 중위 표현식입니다.\n괄호의 짝이 맞지 않습니다.");
         exit(1);
     }
 }
@@ -133,44 +133,41 @@ void is_infix_fine(char exp[]) { //중위 표현식이 올바른지 검사하는
 //후위표기법으로 변환하는 함수
 void infix_to_postfix(char exp[], char postfix[]) {
     int i, j = 0;
-    char ch;
+    //char ch;
     int len = strlen(exp);
 
     LinkedStackType s;
     init(&s);
 
     for (i = 0; i < len; i++) {
-        ch = exp[i];
-        switch (ch) {
+        //ch = exp[i];
+        switch (exp[i]) {
             case '+':
             case '-':
             case '*':
             case '/':
-                while (!is_empty(&s) && (prec(ch) <= prec(peek(&s)))) {
+                while (!is_empty(&s) && (prec(exp[i]) <= prec(peek(&s)))) {
                     //스택에 있는 연산자의 우선순위가 더 높거나 같으면 pop
                     postfix[j++] = pop(&s);
                     postfix[j++] = ' ';
                 }
-                push(&s, ch);
+                push(&s, exp[i]);
                 break;
             case '(': //왼쪽 괄호는 무조건 스택에 push
-                push(&s, ch);
+                push(&s, exp[i]);
                 break;
             case ')': //오른쪽 괄호는 왼쪽 괄호가 나올 때까지 pop
                 while (peek(&s) != '(') {
                     postfix[j++] = pop(&s);
                     postfix[j++] = ' ';
                 }
-                if (is_empty(&s) || pop(&s) != '(') {
-                    printf("Error: Invalid infix expression.\n");
-                    exit(1);
-                }
+                pop(&s); //왼쪽 괄호 pop(제거)
                 break;
             case '.': //소숫점은 그냥 출력
-                postfix[j++] = ch;
+                postfix[j++] = exp[i];
                 break;
             default: //피연산자는 출력
-                postfix[j++] = ch;
+                postfix[j++] = exp[i];
                 if (!isdigit(exp[i + 1]) && exp[i + 1] != '.') //피연산자 뒤에 숫자가 아닌 문자가 오면 공백 추가
                     postfix[j++] = ' ';
                 break;
@@ -185,6 +182,7 @@ void infix_to_postfix(char exp[], char postfix[]) {
 
 //후위표기법을 계산하는 함수
 double eval_postfix(char exp[]) {
+    char ch;
     int i = 0; //exp의 인덱스
     double op1, op2, value;
     int len = strlen(exp);
@@ -193,12 +191,13 @@ double eval_postfix(char exp[]) {
     init(&s);
 
     for (i = 0; i < len; i++) {
-        if (isdigit(exp[i]) || exp[i] == '.') { //피연산자는 스택에 push
+        ch = exp[i];
+        if (isdigit(ch) || ch == '.') { //피연산자는 스택에 push
             value = atof(&exp[i]); //문자열을 실수로 변환
             push(&s, value); //스택에 push
             while (isdigit(exp[i]) || exp[i] == '.') //연산자가 나올 때까지 인덱스 증가
                 i++;
-        } else if (exp[i] == ' ') //공백은 무시
+        } else if (ch == ' ') //공백은 무시
             continue;
         else { //연산자는 스택에서 pop
             op2 = pop(&s);
@@ -222,6 +221,59 @@ double eval_postfix(char exp[]) {
     return pop(&s);
 }
 
+//전위표기법으로 변환하는 함수
+void infix_to_prefix(char exp[]) {
+    int i, j = 0;
+    int len = strlen(exp);
+
+    char prefix[MAX_EXPR_LEN] = {""};
+    LinkedStackType s;
+    init(&s);
+
+    for (i = len - 1; i >= 0; i--) {
+        switch (exp[i]) {
+            case '+':
+            case '-':
+            case '*':
+            case '/':
+                while (!is_empty(&s) && (prec(exp[i]) < prec(peek(&s)))) {
+                    //스택에 있는 연산자의 우선순위가 더 높거나 같으면 pop
+                    prefix[j++] = pop(&s);
+                    prefix[j++] = ' ';
+                }
+                push(&s, exp[i]);
+                break;
+            case '(': //후위와 달리 역순이기 때문에 좌우 괄호 역할이 반대
+                while (peek(&s) != ')') {
+                    prefix[j++] = pop(&s);
+                    prefix[j++] = ' ';
+                }
+                pop(&s);
+                break;
+            case ')': //오른쪽 괄호는 왼쪽 괄호가 나올 때까지 pop
+                push(&s, exp[i]);
+                break;
+            case '.': //소숫점은 그냥 출력
+                prefix[j++] = exp[i];
+                break;
+            default: //피연산자는 출력
+                prefix[j++] = exp[i];
+                if (!isdigit(exp[i - 1]) && exp[i - 1] != '.') //피연산자 뒤에 숫자가 아닌 문자가 오면 공백 추가
+                    break;
+                prefix[j++] = ' ';
+                break;
+        }
+    }
+    while (!is_empty(&s)) {  //스택에 남아있는 모든 연산자 pop
+        prefix[j++] = pop(&s);
+        prefix[j++] = ' ';
+    }
+    prefix[j] = '\0';
+
+    for (i = strlen(prefix) - 1; i >= 0; i--) //역순으로 출력
+        printf("%c", prefix[i]);
+}
+
 // 주 함수
 int main(void) {
     char infix[MAX_EXPR_LEN] = {""};
@@ -231,15 +283,15 @@ int main(void) {
     infix[strcspn(infix, "\n")] = '\0';    // fgets로 입력받은 문자열 마지막 개행 문자 제거
     is_infix_fine(infix);
 
-//    printf("전위식 : ");
-//    infix_to_prefix(infix);
-//    printf("\n");
-//
+    printf("전위식 : ");
+    infix_to_prefix(infix);
+    printf("\n");
+
     printf("후위식 : ");
     infix_to_postfix(infix, postfix);
     printf("%s", postfix);
     printf("\n");
-//
+
     printf("계산결과 : %lf", eval_postfix(&postfix));
     return 0;
 }
