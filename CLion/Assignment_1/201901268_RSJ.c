@@ -186,8 +186,7 @@ void infix_to_postfix(char exp[], char postfix[]) {
 }
 
 //후위표기법을 계산하는 함수
-double eval_postfix(char exp[]) {
-    char ch;
+double eval_postfix(char *exp) {
     double op1, op2, value;
     int len = strlen(exp);
 
@@ -195,13 +194,12 @@ double eval_postfix(char exp[]) {
     init(&s);
 
     for (int i = 0; i < len; i++) {
-        ch = exp[i];
-        if (isdigit(ch) || ch == '.') { //피연산자는 스택에 push
+        if (isdigit(exp[i]) || exp[i] == '.') { //피연산자는 스택에 push
             value = atof(&exp[i]); //문자열을 실수로 변환
             push(&s, value); //스택에 push
             while (isdigit(exp[i]) || exp[i] == '.') //연산자가 나올 때까지 인덱스 증가
                 i++;
-        } else if (ch == ' ') //공백은 무시
+        } else if (exp[i] == ' ') //공백은 무시
             continue;
         else { //연산자는 스택에서 pop
             op2 = pop(&s);
@@ -296,7 +294,7 @@ int main(void) {
     printf("%s", postfix);
     printf("\n");
 
-    printf("계산결과 : %g", eval_postfix(&postfix));
+    printf("계산결과 : %g\n", eval_postfix(&postfix));
     return 0;
 }
 
