@@ -16,6 +16,17 @@ typedef struct {
     struct StackNode *link;
 } StackNode;
 
+void is_infix_fine(char exp[]);
+void is_postfix_fine(char exp[]);
+void is_prefix_fine(char exp[]);
+void infix_to_postfix(char exp[], char postfix[]);
+void infix_to_prefix(char exp[]);
+void prefix_to_infix(char exp[]);
+void prefix_to_postfix(char exp[], char postfix[]);
+void postfix_to_infix(char exp[]);
+void postfix_to_prefix(char exp[]);
+double eval_postfix(char *exp);
+
 // 링크드리스트로 스택을 구현하기 위한 구조체
 typedef struct {
     StackNode *top;
@@ -277,23 +288,38 @@ void infix_to_prefix(char exp[]) {
 
 // 주 함수
 int main(void) {
+    int which_one;
+    printf("입력할 수식은 무엇입니까?\n1. 중위식\n2. 전위식\n3. 후위식\n");
+    scanf("%d", &which_one);
+    getchar();
+
     char infix[MAX_LEN] = {""};
     char postfix[MAX_LEN] = {""};
-    printf("중위식을 입력하세요 : ");
-    fgets(infix, MAX_LEN, stdin);
-    infix[strcspn(infix, "\n")] = '\0';    // fgets로 입력받은 문자열 마지막 개행 문자 제거
-    is_infix_fine(infix);
+    char prefix[MAX_LEN] = {""};
 
-    printf("전위식 : ");
-    infix_to_prefix(infix);
-    printf("\n");
+    switch (which_one) {
+        case 1:
+            printf("중위식을 입력하세요 : ");
+            fgets(infix, MAX_LEN, stdin);
+            infix[strcspn(infix, "\n")] = '\0';    // fgets로 입력받은 문자열 마지막 개행 문자 제거
+            is_infix_fine(infix);
 
-    printf("후위식 : ");
-    infix_to_postfix(infix, postfix);
-    printf("%s", postfix);
-    printf("\n");
+            printf("전위식 : ");
+            infix_to_prefix(infix);
+            printf("\n");
 
-    printf("계산결과 : %g\n", eval_postfix(&postfix));
+            printf("후위식 : ");
+            infix_to_postfix(infix, postfix);
+            printf("%s", postfix);
+            printf("\n");
+
+            printf("계산결과 : %g\n", eval_postfix(&postfix));
+            break;
+        case 2:
+
+    }
+
+
     return 0;
 }
 
