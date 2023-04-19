@@ -234,7 +234,7 @@ void infix_to_prefix(char exp[]) {
             case '-':
             case '*':
             case '/':
-                while (!is_empty(&s) && (prec(exp[i]) < prec(peek(&s)))) {
+                while (!is_empty(&s) && (prec(exp[i]) <= prec(peek(&s)))) {
                     //스택에 있는 연산자의 우선순위가 더 높거나 같으면 pop
                     prefix[j++] = pop(&s);
                     prefix[j++] = ' ';
