@@ -207,6 +207,10 @@ double eval_postfix(char *exp) {
                     push(&s, op1 * op2);
                     break;
                 case '/':
+                    if ( op2 == 0.0 ) { //0으로 나누면 오류
+                        fprintf(stderr, "0으로 나눌 수 없습니다.\n");
+                        exit(1);
+                    }
                     push(&s, op1 / op2);
                     break;
             }
