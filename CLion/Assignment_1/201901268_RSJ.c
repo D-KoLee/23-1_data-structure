@@ -1,9 +1,9 @@
 //
 // Created by SeungJun Ryu on 2023/04/15.
 //
-#include <stdio.h> // printf, scanf, puts
-#include <stdlib.h> // malloc, free
-#include <string.h> // strlen
+#include <stdio.h> // printf, scanf, fprintf
+#include <stdlib.h> // malloc, free, exit, atof
+#include <string.h> // strlen, strcpy
 #include <ctype.h> // isdigit, isalpha
 
 #define MAX_LEN 100    // 중위 표기식의 최대 길이
