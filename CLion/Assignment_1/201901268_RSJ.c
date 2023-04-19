@@ -178,7 +178,7 @@ void infix_to_postfix(char exp[], char postfix[]) {
 }
 
 //후위표기법을 계산하는 함수
-double eval_postfix(char *exp) {
+double eval_postfix(char exp[]) {
     double op1, op2, value;
     int len = strlen(exp);
 
