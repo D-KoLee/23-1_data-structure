@@ -266,7 +266,7 @@ void infix_to_prefix(char exp[]) {
         prefix[j++] = pop(&s);
         prefix[j++] = ' ';
     }
-    prefix[--j] = '\0'; //문자열 끝에 NULL 추가
+    prefix[j] = '\0'; //문자열 끝에 NULL 추가
 
     for (i = strlen(prefix) - 1; i >= 0; i--) //전위표현식은 역순으로 출력
         printf("%c", prefix[i]);
