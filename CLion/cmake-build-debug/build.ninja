@@ -46,11 +46,11 @@ cmake_ninja_workdir = /Users/seungjunryu/Documents/GitHub/23-1_data-structure/CL
 
 build cmake_object_order_depends_target_CLion: phony || CMakeFiles/CLion.dir
 
-build CMakeFiles/CLion.dir/Queue/201901268.c.o: C_COMPILER__CLion_Debug /Users/seungjunryu/Documents/GitHub/23-1_data-structure/CLion/Queue/201901268.c || cmake_object_order_depends_target_CLion
-  DEP_FILE = CMakeFiles/CLion.dir/Queue/201901268.c.o.d
+build CMakeFiles/CLion.dir/Tree/201901268.c.o: C_COMPILER__CLion_Debug /Users/seungjunryu/Documents/GitHub/23-1_data-structure/CLion/Tree/201901268.c || cmake_object_order_depends_target_CLion
+  DEP_FILE = CMakeFiles/CLion.dir/Tree/201901268.c.o.d
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -fcolor-diagnostics -std=gnu11
   OBJECT_DIR = CMakeFiles/CLion.dir
-  OBJECT_FILE_DIR = CMakeFiles/CLion.dir/Queue
+  OBJECT_FILE_DIR = CMakeFiles/CLion.dir/Tree
 
 
 # =============================================================================
@@ -60,7 +60,7 @@ build CMakeFiles/CLion.dir/Queue/201901268.c.o: C_COMPILER__CLion_Debug /Users/s
 #############################################
 # Link the executable CLion
 
-build CLion: C_EXECUTABLE_LINKER__CLion_Debug CMakeFiles/CLion.dir/Queue/201901268.c.o
+build CLion: C_EXECUTABLE_LINKER__CLion_Debug CMakeFiles/CLion.dir/Tree/201901268.c.o
   FLAGS = -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk
   OBJECT_DIR = CMakeFiles/CLion.dir
   POST_BUILD = :
