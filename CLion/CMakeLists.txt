@@ -4,4 +4,4 @@ project(CLion C)
 set(CMAKE_C_STANDARD 11)
 
 #add_executable(CLion Assignment_1/kjs.c)
-add_executable(CLion Tree/201901268.c Tree/201901268.c)
+add_executable(CLion heap/201901268.c)
