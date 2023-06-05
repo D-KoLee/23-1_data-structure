@@ -5,9 +5,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define MAX 50
-#define FALSE 0
-#define TRUE 1
+#define MAX 100
 
 struct Vertex {
     int n;
@@ -16,7 +14,7 @@ struct Vertex {
 
 //stack
 int stack[MAX];
-int top = -1;
+int top;
 
 // 배열 arr 설정
 struct Vertex *arr[MAX];
@@ -48,12 +46,10 @@ int peek() {
 }
 
 
-// 공백함수
 int is_empty() {
-    return top == -1;
+    return (top == -1);
 }
 
-// 정점 삽입함수
 void insert_vertex(char item) {
     struct Vertex *v = (struct Vertex *) malloc(sizeof(struct Vertex));
     v->n = item;
@@ -61,64 +57,42 @@ void insert_vertex(char item) {
     arr[count++] = v;
 }
 
-// 간선 삽입함수
-void insert_edge(int start, int end) {
-    adj_mat[start][end] = 1;
-    adj_mat[end][start] = 1;
+void insert_edge(int i, int j) {
+    adj_mat[i][j] = 1;
+    adj_mat[j][i] = 1;
 }
 
-// 계속 출력되는 함수 설정
-void display_vertex(int index) {
-    printf("정점 % c ->", arr[index]->n);
-}
-
-// v가 방문되었는지 안되었는지 확인하는 함수
-int get_vertex(int index) {
-    int v;
-
-    for (v = 0; v < count; v++) {
-        if (adj_mat[index][v] == 1 && arr[v]->visited == false) {
+int get_vertex(int i) {
+    for (int v = 0; v < count; v++) {
+        if (adj_mat[i][v] == 1 && arr[v]->visited == false) {
             return v;
         }
     }
-
     return -1;
 }
 
 void dfs_iterate() {
-    int i;
+    arr[0]->visited = 1;
 
-    // 방문했으면 TRUE
-    arr[0]->visited = TRUE;
-
-    display_vertex(0);
-
-    // 스택에 0삽입
+    printf("정점 %c -> ", arr[0]->n);
     push(0);
 
-    // 만약 스택이 비어있다면...
     while (!is_empty()) {
-        // vertex가 방문하지 않았다면 peek함수로 stack의 top 보기
-        int unvisited_vertex = get_vertex(peek());
+        int isVisited = get_vertex(peek());
 
-        if (unvisited_vertex == -1) {
+        if (isVisited == -1) {
             pop();
         } else {
-            arr[unvisited_vertex]->visited = true;
-            display_vertex(unvisited_vertex);
-            push(unvisited_vertex);
+            arr[isVisited]->visited = true;
+            printf("정점 %c -> ", arr[isVisited]->n);
+            push(isVisited);
         }
-    }
-
-    // 스택이 비어있고, 탐색이 끝나면 처음으로 다시 돌아가기
-    for (i = 0; i < count; i++) {
-        arr[i]->visited = false;
     }
 }
 
 int main() {
     int i, j;
-    struct Vertex *v;
+    init();
 
     for (i = 0; i < 4; i++) {
         for (j = 0; j < MAX; j++)
@@ -137,8 +111,6 @@ int main() {
     insert_edge(1, 2);
     insert_edge(2, 3);
 
-    printf("깊이 우선 탐색\n");
+    printf("명시적 스택을 이용한 깊이 우선 탐색\n");
     dfs_iterate();
-
-    return 0;
 }
