@@ -23,7 +23,7 @@ typedef struct {
 } Name; // 역정보 구조체
 
 // 역의 호선이름 순서대로 저장(ex 4호선, 공항철도) 구조체
-typedef struct {
+typedef struct {++
     char stname[20];
 } Station;
 
